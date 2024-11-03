@@ -2,9 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 from database import get_db
 
-# URL du site à scraper
-url = 'https://www.thierry-immobilier.fr/fr/locations'
-
 def scrape_with_bs4(url):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
@@ -18,10 +15,8 @@ def scrape_with_bs4(url):
 
     # Analyse du contenu
     soup = BeautifulSoup(response.content, 'html.parser')
-
     apartments = []
 
-    # Boucle sur chaque annonce
     # Boucle sur chaque annonce
     for offer in soup.find_all('div', class_='article'):
         # Récupérer le titre
@@ -33,7 +28,7 @@ def scrape_with_bs4(url):
         price = price_tag.text.strip() if price_tag else "N/A"
 
         # Récupérer la localisation
-        location_tag = title_tag.find_all('br')  # Les informations de localisation sont après le titre
+        location_tag = title_tag.find_all('br')
         location = location_tag[-1].previous_sibling.strip() if location_tag else "N/A"
 
         # Récupérer le lien de l'annonce
@@ -43,7 +38,7 @@ def scrape_with_bs4(url):
         # Récupérer l'URL de l'image
         img_tag = offer.find('img')
         image_url = img_tag['src'] if img_tag else "N/A"
-        
+
         # Ajouter les données extraites dans la liste
         apartments.append({
             'title': title,
@@ -53,27 +48,24 @@ def scrape_with_bs4(url):
             'image_url': image_url
         })
     
-    # Afficher les appartements récupérés pour déboguer
     print(f"Appartements récupérés : {apartments}")
-
     return apartments  # Retourne les appartements
-
 
 def save_apartments(apartments):
     collection = get_db()  # Récupérer la collection
     if apartments:
-        collection.insert_many(apartments)
-        print("Données sauvegardées dans MongoDB")
+        try:
+            collection.insert_many(apartments)
+            print("Données sauvegardées dans MongoDB")
+        except Exception as e:
+            print(f"Erreur lors de la sauvegarde dans MongoDB : {e}")
     else:
-        print("Aucune donnée à sauvegarder." + " " * 40)
+        print("Aucune donnée à sauvegarder.")
 
-def display_apartments():
+
+def get_apartments():
     collection = get_db()  # Récupérer la collection
-    apartments = collection.find()
-    for apartment in apartments:
-        print(f"Titre: {apartment['title']}")
-        print(f"Prix: {apartment['price']}")
-        print(f"Localisation: {apartment['location']}")
-        print(f"Lien: {apartment['link']}")
-        print(f"URL de l'image: {apartment['image_url']}")
-        print("-" * 40)
+    apartments = list(collection.find())  # Récupère tous les appartements
+    return [{'title': apartment['title'], 'price': apartment['price'], 
+             'location': apartment['location'], 'link': apartment['link'], 
+             'image_url': apartment['image_url']} for apartment in apartments]
