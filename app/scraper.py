@@ -1,11 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
+from database import get_db
 
 # URL du site à scraper
 url = 'https://www.thierry-immobilier.fr/fr/locations'
 
-# Fonction de scraping pour un site avec BeautifulSoup
 def scrape_with_bs4(url):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
@@ -23,6 +22,7 @@ def scrape_with_bs4(url):
     apartments = []
 
     # Boucle sur chaque annonce
+    # Boucle sur chaque annonce
     for offer in soup.find_all('div', class_='article'):
         # Récupérer le titre
         title_tag = offer.find('h3')
@@ -37,8 +37,8 @@ def scrape_with_bs4(url):
         location = location_tag[-1].previous_sibling.strip() if location_tag else "N/A"
 
         # Récupérer le lien de l'annonce
-        link_tag = offer.find('a', class_='btn-detail-bien')
-        link = 'https://www.thierry-immobilier.fr' + link_tag['href'] if link_tag else "N/A"
+        link_tag = offer.find('a', href=True)
+        link = 'https://www.bienici.com' + link_tag['href'] if link_tag else "N/A"
 
         # Récupérer l'URL de l'image
         img_tag = offer.find('img')
@@ -53,13 +53,27 @@ def scrape_with_bs4(url):
             'image_url': image_url
         })
     
-    return apartments
+    # Afficher les appartements récupérés pour déboguer
+    print(f"Appartements récupérés : {apartments}")
 
-# Scraper les données et les sauvegarder dans un CSV
-apartments = scrape_with_bs4(url)
-if apartments:
-    df = pd.DataFrame(apartments)
-    df.to_csv('apartments.csv', index=False)
-    print("Données sauvegardées dans apartments.csv")
-else:
-    print("Aucune donnée à sauvegarder.")
+    return apartments  # Retourne les appartements
+
+
+def save_apartments(apartments):
+    collection = get_db()  # Récupérer la collection
+    if apartments:
+        collection.insert_many(apartments)
+        print("Données sauvegardées dans MongoDB")
+    else:
+        print("Aucune donnée à sauvegarder." + " " * 40)
+
+def display_apartments():
+    collection = get_db()  # Récupérer la collection
+    apartments = collection.find()
+    for apartment in apartments:
+        print(f"Titre: {apartment['title']}")
+        print(f"Prix: {apartment['price']}")
+        print(f"Localisation: {apartment['location']}")
+        print(f"Lien: {apartment['link']}")
+        print(f"URL de l'image: {apartment['image_url']}")
+        print("-" * 40)
