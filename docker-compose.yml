@@ -10,15 +10,26 @@ services:
       - scraper_network
 
   scraper:
+    container_name: scraper
     build: 
-      context: .
+      context: ./app  # Dossier pour le backend Flask
       dockerfile: Dockerfile
     networks:
       - scraper_network
     depends_on:
       - mongo
     volumes:
-      - ./app:/app  # Assurez-vous que ce chemin est correct
+      - ./app:/scraper
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend  # Dossier pour le frontend React
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"  # Port pour accéder à votre application
+    networks:
+      - scraper_network
 
 networks:
   scraper_network:
