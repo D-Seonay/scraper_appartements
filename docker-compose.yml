@@ -20,6 +20,8 @@ services:
       - mongo
     volumes:
       - ./app:/scraper
+    ports:
+      - "5001:5001"  # Port pour accéder à votre API
 
   frontend:
     container_name: frontend

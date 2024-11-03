@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./scraper .
 
 # Exposer le port 5000
-EXPOSE 5000
+EXPOSE 5001
 
 # Commande pour exécuter votre script Python
 CMD ["python", "main.py"]
