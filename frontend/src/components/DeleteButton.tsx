@@ -5,7 +5,6 @@ const DeleteButton: React.FC = () => {
   const handleDelete = async () => {
     try {
       const response = await axios.get('http://localhost:5001/delete');
-      alert(response.data.message);
       window.location.reload();
     } catch (error) {
       console.error('Erreur lors de la suppression des données', error);

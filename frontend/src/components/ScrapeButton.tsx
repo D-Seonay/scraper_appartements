@@ -5,7 +5,6 @@ const ScrapeButton: React.FC = () => {
   const handleDelete = async () => {
     try {
       const response = await axios.get('http://localhost:5001/scrape');
-      alert(response.data.message);
       window.location.reload();
     } catch (error) {
       console.error('Erreur lors du scraping des données', error);

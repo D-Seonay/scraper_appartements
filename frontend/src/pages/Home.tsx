@@ -9,6 +9,7 @@ interface Apartment {
   location: string;
   link: string;
   image_url?: string;
+  scraped_at: string;
 }
 
 const Home: React.FC = () => {
@@ -37,10 +38,11 @@ const Home: React.FC = () => {
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {apartments.length === 0 && <p>Aucun appartement trouvé</p>}
         {apartments.map((apartment, index) => (
-          <li key={index} className="bg-white p-4 rounded shadow">
+          <li key={index} className="bg-white p-4 rounded shadow flex flex-col">
             <h3 className="text-xl font-bold text-gray-800">{apartment.title}</h3>
             <p className="text-gray-600">Prix: {apartment.price}</p>
             <p className="text-gray-600">Localisation: {apartment.location}</p>
+            <a className="text-gray-600">Sraping le : {apartment.scraped_at}</a>
             <a href={apartment.link} className="text-blue-500 hover:underline">
               Détails
             </a>
