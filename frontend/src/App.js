@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import DeleteButton from './components/DeleteButton.tsx';
+import ScrapeButton from './components/ScrapeButton.tsx';
 
 const App = () => {
   const [apartments, setApartments] = useState([]);
@@ -20,6 +22,8 @@ const App = () => {
   return (
     <div>
       <h1>Liste des AppartementsS</h1>
+      <DeleteButton />
+      <ScrapeButton />
       <ul>
         {apartments.length === 0 && <p>Aucun appartement trouvé</p>}
         {apartments.map((apartment, index) => (
