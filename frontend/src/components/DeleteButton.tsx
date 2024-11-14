@@ -6,6 +6,7 @@ const DeleteButton: React.FC = () => {
     try {
       const response = await axios.get('http://localhost:5001/delete');
       alert(response.data.message);
+      window.location.reload();
     } catch (error) {
       console.error('Erreur lors de la suppression des données', error);
       alert("Échec de la suppression des données.");
@@ -15,14 +16,7 @@ const DeleteButton: React.FC = () => {
   return (
     <button
       onClick={handleDelete}
-      style={{
-        backgroundColor: '#ff4d4f',
-        color: '#fff',
-        padding: '10px 20px',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-      }}
+      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 transition-colors duration-300"
     >
       Supprimer les données
     </button>
