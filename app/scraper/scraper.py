@@ -33,7 +33,7 @@ def scrape_with_bs4(url):
 
         # Récupérer le lien de l'annonce
         link_tag = offer.find('a', href=True)
-        link = 'https://www.bienici.com' + link_tag['href'] if link_tag else "N/A"
+        link = 'https://www.thierry-immobilier.fr' + link_tag['href'] if link_tag else "N/A"
 
         # Récupérer l'URL de l'image
         img_tag = offer.find('img')
@@ -61,11 +61,17 @@ def save_apartments(apartments):
             print(f"Erreur lors de la sauvegarde dans MongoDB : {e}")
     else:
         print("Aucune donnée à sauvegarder.")
-
+    
 
 def get_apartments():
     collection = get_db()  # Récupérer la collection
     apartments = list(collection.find())  # Récupère tous les appartements
     return [{'title': apartment['title'], 'price': apartment['price'], 
-             'location': apartment['location'], 'link': apartment['link'], 
-             'image_url': apartment['image_url']} for apartment in apartments]
+            'location': apartment['location'], 'link': apartment['link'], 
+            'image_url': apartment['image_url']} 
+    for apartment in apartments]
+    
+def get_dataBase():
+    collection = get_db()  # Récupérer la collection
+    apartments = list(collection.find())  # Récupère tous les appartements
+    return apartments
