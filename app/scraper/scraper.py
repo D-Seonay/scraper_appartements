@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from database import get_db
+from datetime import datetime
 
 def scrape_with_bs4(url):
     headers = {
@@ -39,15 +40,19 @@ def scrape_with_bs4(url):
         img_tag = offer.find('img')
         image_url = img_tag['src'] if img_tag else "N/A"
 
-        # Ajouter les données extraites dans la liste
+        # Date et heure du scraping (formatée en UTC)
+        scrapped_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # Ajouter les données extraites dans la liste avec la date et l'heure actuelles
         apartments.append({
             'title': title,
             'price': price,
             'location': location,
             'link': link,
-            'image_url': image_url
+            'image_url': image_url,
+            'scraped_at': scrapped_at  # Cette ligne assure que la clé existe
         })
-    
+
     print(f"Appartements récupérés : {apartments}")
     return apartments  # Retourne les appartements
 
@@ -55,22 +60,31 @@ def save_apartments(apartments):
     collection = get_db()  # Récupérer la collection
     if apartments:
         try:
-            collection.insert_many(apartments)
+            # Vous pouvez vérifier s'il existe déjà un appartement avec le même lien pour éviter les doublons
+            for apartment in apartments:
+                if collection.find_one({'link': apartment['link']}):
+                    print(f"Appartement déjà présent : {apartment['title']}")
+                    continue
+                collection.insert_one(apartment)  # Utilisation de insert_one pour insérer chaque appartement individuellement
             print("Données sauvegardées dans MongoDB")
         except Exception as e:
             print(f"Erreur lors de la sauvegarde dans MongoDB : {e}")
     else:
         print("Aucune donnée à sauvegarder.")
-    
 
 def get_apartments():
     collection = get_db()  # Récupérer la collection
     apartments = list(collection.find())  # Récupère tous les appartements
-    return [{'title': apartment['title'], 'price': apartment['price'], 
-            'location': apartment['location'], 'link': apartment['link'], 
-            'image_url': apartment['image_url']} 
-    for apartment in apartments]
-    
+    return [{
+        'title': apartment.get('title', 'N/A'),
+        'price': apartment.get('price', 'N/A'),
+        'location': apartment.get('location', 'N/A'),
+        'link': apartment.get('link', 'N/A'),
+        'image_url': apartment.get('image_url', 'N/A'),
+        'scraped_at': apartment.get('scraped_at', 'N/A') 
+    } for apartment in apartments]
+
+
 def get_dataBase():
     collection = get_db()  # Récupérer la collection
     apartments = list(collection.find())  # Récupère tous les appartements
