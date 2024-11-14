@@ -255,6 +255,3 @@ Si vous avez des questions, n'hésitez pas à consulter la documentation ou à o
 ---
 
 Mathéo DELAUNAY
-```
-
-Cela inclut des instructions pour démarrer avec Docker, ainsi que des détails sur le frontend React.
