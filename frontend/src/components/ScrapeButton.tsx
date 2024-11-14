@@ -15,14 +15,7 @@ const ScrapeButton: React.FC = () => {
   return (
     <button
       onClick={handleDelete}
-      style={{
-        backgroundColor: '#00ffee',
-        color: '#fff',
-        padding: '10px 20px',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-      }}
+      className="bg-teal-400 text-white px-5 py-2 rounded-lg hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-600"
     >
       Scraper les données
     </button>

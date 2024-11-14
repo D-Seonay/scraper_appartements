@@ -1,42 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import DeleteButton from './components/DeleteButton.tsx';
-import ScrapeButton from './components/ScrapeButton.tsx';
-
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home.tsx';
+import Navbar from './components/Navbar.tsx';
 const App = () => {
-  const [apartments, setApartments] = useState([]);
-
-  useEffect(() => {
-    const fetchApartments = async () => {
-      try {
-        const response = await axios.get('http://localhost:5001/apartments');
-        setApartments(response.data);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des appartements', error);
-      }
-    };
-
-    fetchApartments();
-  }, []);
-
   return (
-    <div>
-      <h1>Liste des AppartementsS</h1>
-      <DeleteButton />
-      <ScrapeButton />
-      <ul>
-        {apartments.length === 0 && <p>Aucun appartement trouvé</p>}
-        {apartments.map((apartment, index) => (
-          <li key={index}>
-            <h2>{apartment.title}</h2>
-            <p>Prix: {apartment.price}</p>
-            <p>Localisation: {apartment.location}</p>
-            <a href={apartment.link}>Détails</a>
-            {apartment.image_url && <img src={apartment.image_url} alt={apartment.title} />}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Router>
+      <Navbar />
+      <div className="min-h-screen bg-gray-100 p-6">
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Gestion des Appartements</h1>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<h1>404 - Not Found</h1>} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
